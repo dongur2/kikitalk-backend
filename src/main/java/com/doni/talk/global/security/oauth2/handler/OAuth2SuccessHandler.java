@@ -46,17 +46,17 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             Cookie cookie = new Cookie("id", principal.getUserInfo().getId());
             cookie.setAttribute("nickname", principal.getUserInfo().getNickname());
             cookie.setAttribute("pic", principal.getUserInfo().getProfileImageUrl());
-            cookie.setAttribute("provider", principal.getUserInfo().getProvider().toLowerCase());
 
             cookie.setHttpOnly(true);
             cookie.setMaxAge(60 * 5); //5분
 
-            return UriComponentsBuilder.fromUriString("http://localhost:8080/api/v1/user").build().toUriString();
+            //회원가입 폼으로
+            return UriComponentsBuilder.fromUriString("http://localhost:8080/api/v1/users/register").build().toUriString();
         }
 
         //있는 회원이면 로그인 진행 - 토큰 발급
         log.info("가입 회원입니다.");
-        return UriComponentsBuilder.fromUriString("http://localhost:8080/api/v1/home")
+        return UriComponentsBuilder.fromUriString("http://localhost:8080/api/v1")
                 .queryParam("access_token", "test-token")
                 .build().toUriString();
     }
