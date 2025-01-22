@@ -56,8 +56,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         //있는 회원이면 로그인 진행 - 토큰 발급
         log.info("가입 회원입니다.");
-        return UriComponentsBuilder.fromUriString("http://localhost:8080/api/v1")
-                .queryParam("access_token", "test-token")
+        String accessToken = userService.signIn(dbUser);
+        log.info("액세스 토큰 발급 완료: {}", accessToken);
+
+        //헤더에 토큰 전달
+        response.setHeader("Authorization", accessToken);
+
+        return UriComponentsBuilder.fromUriString("http://localhost:8080/api/v1/home")
                 .build().toUriString();
     }
 

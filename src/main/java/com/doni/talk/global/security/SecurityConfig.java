@@ -1,7 +1,10 @@
 package com.doni.talk.global.security;
 
+import com.doni.talk.global.security.jwt.JwtFilter;
+import com.doni.talk.global.security.jwt.JwtProvider;
 import com.doni.talk.global.security.oauth2.handler.OAuth2SuccessHandler;
 import com.doni.talk.global.security.oauth2.service.CustomOAuth2UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +12,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@AllArgsConstructor
 @Configuration @EnableWebSecurity
 public class SecurityConfig {
-    @Autowired private CustomOAuth2UserService oauth2UserService;
-    @Autowired private OAuth2SuccessHandler oauth2SuccessHandler;
+    @Autowired private final JwtProvider jwtProvider;
+    @Autowired private final CustomOAuth2UserService oauth2UserService;
+    @Autowired private final OAuth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -24,13 +31,17 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) // 기본 폼 로그인 비활성화
 
                 .oauth2Login(oauth -> oauth
-                        .userInfoEndpoint(userInfo -> userInfo.userService(oauth2UserService))
-                        .successHandler(oauth2SuccessHandler)
+                                .userInfoEndpoint(userInfo -> userInfo.userService(oauth2UserService))
+                                .successHandler(oauth2SuccessHandler)
 //                        .failureHandler(oauth2FailureHandler)
                 )
+
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/**").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/api/v1/home", "/api/v1/users", "/api/v1/users/**").permitAll()
+                        .anyRequest().authenticated())
+
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
