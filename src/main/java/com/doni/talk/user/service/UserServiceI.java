@@ -3,24 +3,35 @@ package com.doni.talk.user.service;
 import com.doni.talk.global.security.jwt.JwtProvider;
 import com.doni.talk.user.domain.User;
 import com.doni.talk.user.dto.request.UserSignUpDTO;
+import com.doni.talk.user.dto.request.UserUpdateDTO;
+import com.doni.talk.user.dto.response.UserProfileDTO;
 import com.doni.talk.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
-@Slf4j @Service @AllArgsConstructor
+@Slf4j @Service
+@AllArgsConstructor @NoArgsConstructor
 public class UserServiceI implements UserService {
-    @Autowired private final JwtProvider jwtProvider;
-    @Autowired private final UserRepository repository;
+    @Autowired private JwtProvider jwtProvider;
+    @Autowired private UserRepository repository;
+
+    @Value("${profile.default_img}") private String DEFAULT_PROFILE_IMG;
 
     @Override
     public User getUserBySnsId(String snsId) {
-        Optional<User> user = repository.findBySnsId(snsId);
-        return user.orElse(null);
+        return repository.findBySnsId(snsId).orElseThrow(NullPointerException::new);
+    }
+
+    @Override
+    public UserProfileDTO getUserById(Long id) throws NullPointerException {
+        User user = repository.findById(id).orElseThrow(NullPointerException::new);
+        return UserProfileDTO.from(user);
     }
 
     @Override @Transactional
@@ -30,7 +41,13 @@ public class UserServiceI implements UserService {
 
     @Override
     public String signIn(User user) {
-        log.info("로그인합니다. {}", user);
         return jwtProvider.createAccessToken(user);
+    }
+
+    @Override @Transactional
+    public UserProfileDTO updateUserProfile(Long id, UserUpdateDTO updateInfo) {
+        User user = repository.findById(id).orElseThrow(NullPointerException::new);
+        user.updateUserProfile(updateInfo, DEFAULT_PROFILE_IMG);
+        return UserProfileDTO.from(user);
     }
 }

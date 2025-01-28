@@ -5,15 +5,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 
 @Slf4j @ControllerAdvice
 public class ExceptionController {
 
     // 400 BAD_REQUEST
+    @ExceptionHandler({ MethodArgumentNotValidException.class })
+    public ResponseEntity<Object> handleValidationBadRequestException(final MethodArgumentNotValidException ex) {
+        log.warn("[ERROR] ", ex);
+        return ResponseEntity.badRequest().body(ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage());
+    }
     @ExceptionHandler({ RuntimeException.class })
-    public ResponseEntity<Object> BadRequestException(final RuntimeException ex) {
+    public ResponseEntity<Object> handleBadRequestException(final RuntimeException ex) {
         log.warn("[ERROR] ", ex);
         return ResponseEntity.badRequest().body(ex.getMessage());
     }

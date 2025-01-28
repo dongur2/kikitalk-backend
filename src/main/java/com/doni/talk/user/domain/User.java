@@ -1,10 +1,8 @@
 package com.doni.talk.user.domain;
 
+import com.doni.talk.user.dto.request.UserUpdateDTO;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity @Table(name = "tbl_user_info")
 @Getter @ToString @NoArgsConstructor
@@ -37,5 +35,12 @@ public class User {
         this.nickname = nickname;
         this.message = message;
         this.profileImage = profileImage;
+    }
+
+    public void updateUserProfile(UserUpdateDTO newInfo, String defaultImg) {
+        this.phone = newInfo.getPhone();
+        this.nickname = newInfo.getNickname();
+        this.message = newInfo.getMessage();
+        this.profileImage = (newInfo.getProfileImage() == null) ? defaultImg : newInfo.getProfileImage();
     }
 }
