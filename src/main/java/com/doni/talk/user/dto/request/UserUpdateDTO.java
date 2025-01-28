@@ -1,6 +1,5 @@
 package com.doni.talk.user.dto.request;
 
-import com.doni.talk.user.domain.User;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -21,13 +20,4 @@ public class UserUpdateDTO {
     String phone;
 
     String profileImage;
-
-    public User to() {
-        return User.builder()
-                .nickname(nickname)
-                .message(message)
-                .phone(phone)
-                .profileImage(profileImage)
-                .build();
-    }
 }

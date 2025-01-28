@@ -36,7 +36,7 @@ public class UserServiceI implements UserService {
 
     @Override @Transactional
     public User join(UserSignUpDTO postInfo) {
-        return repository.save(postInfo.to());
+        return repository.save(postInfo.to(DEFAULT_PROFILE_IMG));
     }
 
     @Override

@@ -1,13 +1,13 @@
 package com.doni.talk.user.controller;
 
 import com.doni.talk.global.security.jwt.service.CustomUserDetails;
-import com.doni.talk.user.domain.User;
 import com.doni.talk.user.dto.request.UserUpdateDTO;
 import com.doni.talk.user.dto.request.UserSignUpDTO;
 import com.doni.talk.user.dto.response.UserProfileDTO;
 import com.doni.talk.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,14 +24,14 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public ResponseEntity<?> signUpForm() {
+    public ResponseEntity<String> signUpForm() {
         return ResponseEntity.ok("회원가입 폼 - 닉네임, 번호, 생년월일 입력 후 요청");
     }
 
     @PostMapping
-    public ResponseEntity<?> signUp(@RequestPart("info") UserSignUpDTO userInfo) {
-        User joined = userService.join(userInfo);
-        return ResponseEntity.ok(joined);
+    public ResponseEntity<HttpStatus> signUp(@Valid @RequestPart("info") UserSignUpDTO userInfo) {
+        userService.join(userInfo);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
