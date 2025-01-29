@@ -15,8 +15,8 @@ public class UserUpdateDTO {
     @Size(max = 50, message = "상태 메세지는 최대 50글자까지 가능합니다.")
     String message;
 
-    @NotBlank(message = "휴대폰 번호를 입력해주세요.")
-    @Pattern(regexp = "^[0-9]{10,11}$", message = "휴대폰 번호는 10~11자리의 숫자만 입력할 수 있습니다.")
+    @NotBlank(message = "연락처를 입력해주세요.")
+    @Pattern(regexp = "^[0-9]{10,11}$", message = "연락처는 10~11자리의 숫자만 입력할 수 있습니다.")
     String phone;
 
     String profileImage;
