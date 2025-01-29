@@ -1,5 +1,6 @@
 package com.doni.talk.global.exception.controller;
 
+import com.doni.talk.user.exception.DuplicateRelationshipRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,13 @@ public class ExceptionController {
     public ResponseEntity handleNullPointerException(final NullPointerException ex) {
         log.warn("[ERROR] ", ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    // 409 CONFLICT
+    @ExceptionHandler({ DuplicateRelationshipRequestException.class })
+    public ResponseEntity handleNullPointerException(final DuplicateRelationshipRequestException ex) {
+        log.warn("[ERROR] ", ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
     // 500 SERVER_ERROR
