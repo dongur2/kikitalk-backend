@@ -8,7 +8,7 @@ import lombok.*;
 
 @Setter @Getter @ToString
 @AllArgsConstructor @NoArgsConstructor
-public class UserSignUpDTO {
+public class SignUpDTO {
     @NotBlank(message = "오류가 발생했습니다. 다시 소셜 로그인해주세요.")
     String snsId;
 

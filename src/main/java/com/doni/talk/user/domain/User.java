@@ -1,6 +1,6 @@
 package com.doni.talk.user.domain;
 
-import com.doni.talk.user.dto.request.UserUpdateDTO;
+import com.doni.talk.user.dto.request.UpdateProfileDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,7 +37,7 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    public void updateUserProfile(UserUpdateDTO newInfo, String defaultImg) {
+    public void updateUserProfile(UpdateProfileDTO newInfo, String defaultImg) {
         this.phone = newInfo.getPhone();
         this.nickname = newInfo.getNickname();
         this.message = newInfo.getMessage();

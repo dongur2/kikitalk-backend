@@ -5,7 +5,7 @@ import lombok.*;
 
 @Setter @Getter @ToString
 @AllArgsConstructor @NoArgsConstructor
-public class UserUpdateDTO {
+public class UpdateProfileDTO {
 
     @NotBlank(message = "닉네임을 입력해주세요.")
     @Pattern(regexp = "^[0-9A-Za-z가-힣]+$", message = "닉네임에 특수문자는 포함할 수 없습니다.")

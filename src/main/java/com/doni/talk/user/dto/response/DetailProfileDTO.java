@@ -5,14 +5,14 @@ import lombok.*;
 
 @Getter @Setter @Builder
 @NoArgsConstructor @AllArgsConstructor
-public class UserProfileDTO {
+public class DetailProfileDTO {
     String name;
     String nickname;
     String message;
     String profileImg;
 
-    public static UserProfileDTO from(User user) {
-        return UserProfileDTO.builder()
+    public static DetailProfileDTO from(User user) {
+        return DetailProfileDTO.builder()
                 .name(user.getName())
                 .nickname(user.getNickname())
                 .message(user.getMessage())
