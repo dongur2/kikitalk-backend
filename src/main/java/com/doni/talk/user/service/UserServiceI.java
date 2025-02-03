@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+
 @Slf4j @Service
 @RequiredArgsConstructor
 public class UserServiceI implements UserService {
@@ -20,11 +21,13 @@ public class UserServiceI implements UserService {
 
     @Value("${profile.default_img}") private String DEFAULT_PROFILE_IMG;
 
+    //oauth2
     @Override
     public User getUserBySnsId(String snsId) {
         return repository.findBySnsId(snsId).orElseThrow(NullPointerException::new);
     }
 
+    //관계 추가
     @Override
     public User getUserById(Long id) {
         return repository.findById(id).orElseThrow(NullPointerException::new);
