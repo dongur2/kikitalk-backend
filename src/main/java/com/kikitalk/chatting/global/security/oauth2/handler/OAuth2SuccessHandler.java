@@ -6,7 +6,9 @@ import com.kikitalk.chatting.user.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -14,13 +16,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
-@Slf4j @Component
+@Slf4j @Component @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    @Value("${auth.url.login}") private String LOGIN_URL;
     private final UserService userService;
-
-    public OAuth2SuccessHandler(UserService userService) {
-        this.userService = userService;
-    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -31,7 +30,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         OAuth2UserPrincipal principal = getOAuth2UserPrincipal(authentication);
         if (principal == null) {
-            return UriComponentsBuilder.fromUriString("http://localhost:8080")
+            return UriComponentsBuilder.fromUriString(LOGIN_URL)
                     .queryParam("error", "Login failed")
                     .build().toUriString();
         }
@@ -62,8 +61,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //헤더에 토큰 전달
         response.setHeader("Authorization", accessToken);
 
-        return UriComponentsBuilder.fromUriString("http://localhost:8080/api/v1/home")
-                .build().toUriString();
+        return UriComponentsBuilder.fromUriString(LOGIN_URL).build().toUriString();
     }
 
     private OAuth2UserPrincipal getOAuth2UserPrincipal(Authentication authentication) {
