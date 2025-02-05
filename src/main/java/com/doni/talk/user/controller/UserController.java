@@ -7,11 +7,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 
 /**
- * 회원 가입 및 인증 관련 컨트롤러입니다.
+ * 회원 가입 및 인증 관련 컨트롤러입니다. <br>
  * 회원가입, 로그인을 담당합니다.
 
  * @since 1.0
@@ -41,6 +42,7 @@ public class UserController {
      *
      * @param userInfo 회원 정보 (SNS ID, 이름, 닉네임, 상태 메세지, 연락처, 프로필 사진 URL)
      * @return HTTP 상태 코드 (200 OK)
+     * @throws MethodArgumentNotValidException 유효성 검사에 실패할 경우
      * @since 1.0
      */
     @PostMapping
