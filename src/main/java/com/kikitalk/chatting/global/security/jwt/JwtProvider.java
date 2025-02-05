@@ -27,10 +27,10 @@ public class JwtProvider {
     private final Long accessTokenExpTime;
     private final CustomUserDetailsService customUserDetailsService;
 
-    public JwtProvider(@Value("${jwt.secret}") String secretKey, @Value("${jwt.exp_time}") Long period, CustomUserDetailsService customUserDetailsService) {
+    public JwtProvider(@Value("${jwt.secret}") String secretKey, @Value("${jwt.exp_time}") Long tokenPeriod, CustomUserDetailsService customUserDetailsService) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.accessTokenExpTime = period;
+        this.accessTokenExpTime = tokenPeriod;
         this.customUserDetailsService = customUserDetailsService;
     }
 
@@ -45,13 +45,13 @@ public class JwtProvider {
         claims.put("id", user.getId());
         claims.put("snsId", user.getSnsId());
 
-        ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime tokenValidity = now.plusSeconds(period);
+        Date now = new Date();
+        Date tokenValidity = new Date(now.getTime() + period);
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setIssuedAt(Date.from(now.toInstant()))
-                .setExpiration(Date.from(tokenValidity.toInstant()))
+                .setIssuedAt(now)
+                .setExpiration(tokenValidity)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -93,13 +93,13 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("토큰이 유효하지 않습니다. - {}", e);
+            log.info("토큰이 유효하지 않습니다. - {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            log.info("만료된 토큰입니다. - {}", e);
+            log.info("만료된 토큰입니다. - {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            log.info("지원하지 않는 토큰입니다. - {}", e);
+            log.info("지원하지 않는 토큰입니다. - {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.info("토큰 안의 내용이 비어있습니다. - {}", e);
+            log.info("토큰 안의 내용이 비어있습니다. - {}", e.getMessage());
         }
         return false;
     }
