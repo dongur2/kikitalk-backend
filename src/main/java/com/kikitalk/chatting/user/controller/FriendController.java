@@ -1,5 +1,6 @@
 package com.kikitalk.chatting.user.controller;
 
+import com.kikitalk.chatting.global.response.CommonResponse;
 import com.kikitalk.chatting.global.security.jwt.service.CustomUserDetails;
 import com.kikitalk.chatting.user.dto.request.UserSearchDTO;
 import com.kikitalk.chatting.user.dto.response.SimpleProfileDTO;
@@ -9,7 +10,6 @@ import com.kikitalk.chatting.user.service.FriendService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +39,9 @@ public class FriendController {
      * @since 1.0
      */
     @GetMapping("/{id}/friends")
-    public ResponseEntity<List<SimpleProfileDTO>> getFriends(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(friendService.getFriendList(id));
+    public CommonResponse<List<SimpleProfileDTO>> getFriends(@PathVariable("id") Long id) {
+        List<SimpleProfileDTO> friendList = friendService.getFriendList(id);
+        return CommonResponse.of("친구 목록 조회가 완료되었습니다.", friendList);
     }
 
     /**
@@ -55,9 +56,10 @@ public class FriendController {
      * @since 1.0
      */
     @GetMapping("/search")
-    public ResponseEntity<SearchProfileDTO> searchFriend(@AuthenticationPrincipal CustomUserDetails user,
+    public CommonResponse<SearchProfileDTO> searchFriend(@AuthenticationPrincipal CustomUserDetails user,
                                                          @Valid @RequestPart(value = "param") UserSearchDTO param) {
-        return ResponseEntity.ok(friendService.getUserBySearch(user.getUser(), param));
+        SearchProfileDTO foundUserProfile = friendService.getUserBySearch(user.getUser(), param);
+        return CommonResponse.of("회원 검색이 완료되었습니다.", foundUserProfile);
     }
 
     /**
@@ -72,7 +74,8 @@ public class FriendController {
      * @since 1.0
      */
     @PostMapping("/{id}/friends")
-    public ResponseEntity<SearchProfileDTO> addFriend(@PathVariable("id") Long id, @RequestParam("otherId") Long otherId) {
-        return ResponseEntity.ok(friendService.addFriend(id, otherId));
+    public CommonResponse<SearchProfileDTO> addFriend(@PathVariable("id") Long id, @RequestParam("otherId") Long otherId) {
+        SearchProfileDTO addedFriendProfile = friendService.addFriend(id, otherId);
+        return CommonResponse.of("친구 추가가 완료되었습니다.", addedFriendProfile);
     }
 }

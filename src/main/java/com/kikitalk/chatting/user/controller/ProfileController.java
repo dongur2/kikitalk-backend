@@ -1,5 +1,6 @@
 package com.kikitalk.chatting.user.controller;
 
+import com.kikitalk.chatting.global.response.CommonResponse;
 import com.kikitalk.chatting.global.security.jwt.service.CustomUserDetails;
 import com.kikitalk.chatting.user.dto.request.UpdateProfileDTO;
 import com.kikitalk.chatting.user.dto.response.DetailProfileDTO;
@@ -7,7 +8,6 @@ import com.kikitalk.chatting.user.service.ProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,8 +34,9 @@ public class ProfileController {
      * @since 1.0
      */
     @GetMapping
-    public ResponseEntity<DetailProfileDTO> getUserProfile(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(profileService.getUserProfileById(id));
+    public CommonResponse<DetailProfileDTO> getUserProfile(@PathVariable("id") Long id) {
+        DetailProfileDTO profile = profileService.getUserProfileById(id);
+        return CommonResponse.of("프로필 조회가 완료되었습니다.", profile);
     }
 
     /**
@@ -57,10 +58,12 @@ public class ProfileController {
      * @since 1.0
      */
     @PostMapping
-    public ResponseEntity<DetailProfileDTO> updateUserProfile(@AuthenticationPrincipal CustomUserDetails user, @PathVariable("id") Long id,
+    public CommonResponse<DetailProfileDTO> updateUserProfile(@AuthenticationPrincipal CustomUserDetails user, @PathVariable("id") Long id,
                                                               @Valid @RequestPart(value = "info") UpdateProfileDTO userInfo) {
         // 요청한 id와 현재 로그인한 사용자의 id가 다른 경우
         if (!user.getUser().getId().equals(id)) throw new AccessDeniedException("권한이 없습니다.");
-        return ResponseEntity.ok(profileService.updateUserProfile(id, userInfo));
+
+        DetailProfileDTO updatedProfile = profileService.updateUserProfile(id, userInfo);
+        return CommonResponse.of("프로필 수정이 완료되었습니다.", updatedProfile);
     }
 }

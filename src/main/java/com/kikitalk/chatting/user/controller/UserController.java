@@ -1,12 +1,11 @@
 package com.kikitalk.chatting.user.controller;
 
+import com.kikitalk.chatting.global.response.CommonResponse;
 import com.kikitalk.chatting.user.dto.request.SignUpDTO;
 import com.kikitalk.chatting.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +32,8 @@ public class UserController {
      * @since 1.0
      */
     @GetMapping("/register")
-    public ResponseEntity<String> signUpForm() {
-        return ResponseEntity.ok("회원가입 폼 - 닉네임, 연락처, 생년월일 입력 후 요청");
+    public CommonResponse<Void> signUpForm() {
+        return CommonResponse.of("OAUth2 로그인에 성공했습니다. 추가 회원 정보를 입력하여 회원가입을 진행하세요.");
     }
 
     /**
@@ -46,8 +45,8 @@ public class UserController {
      * @since 1.0
      */
     @PostMapping
-    public ResponseEntity<HttpStatus> signUp(@Valid @RequestPart("info") SignUpDTO userInfo) {
+    public CommonResponse<Void> signUp(@Valid @RequestPart("info") SignUpDTO userInfo) {
         userService.join(userInfo);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return CommonResponse.of("회원가입이 완료되었습니다.");
     }
 }
