@@ -15,6 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j @Component @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -49,7 +53,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         } catch (NullPointerException e) {
             //없는 회원이면 회원가입 진행: OAuth2로 받아온 데이터 전달
-            bindUserInfoFromOAuthOnCookie(principal);
+            bindUserInfoFromOAuth2OnCookie(response, principal);
 
             //회원가입 폼으로
             return UriComponentsBuilder.fromUriString("http://localhost:8080/api/v1/users/register").build().toUriString();
@@ -63,12 +67,22 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         return (principal instanceof OAuth2UserPrincipal) ? (OAuth2UserPrincipal) principal : null;
     }
 
-    private void bindUserInfoFromOAuthOnCookie(OAuth2UserPrincipal principal) {
-        Cookie cookie = new Cookie("id", principal.getUserInfo().getId());
-        cookie.setAttribute("nickname", principal.getUserInfo().getNickname());
-        cookie.setAttribute("pic", principal.getUserInfo().getProfileImageUrl());
+    private void bindUserInfoFromOAuth2OnCookie(HttpServletResponse response, OAuth2UserPrincipal principal) {
+        Map<String, String> info = new HashMap<>();
+        info.put("id", principal.getUserInfo().getId());
+        info.put("nickname", URLEncoder.encode(principal.getUserInfo().getNickname(), StandardCharsets.UTF_8));
+        info.put("pic", principal.getUserInfo().getProfileImageUrl());
 
+        info.forEach((key, value) -> response.addCookie(makeCookie(key, value)));
+    }
+
+    private Cookie makeCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+
+        cookie.setPath("http://localhost:8080/api/v1/users/register");
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(60 * 5); //5분
+        cookie.setMaxAge(60 * 5); // 5분
+
+        return cookie;
     }
 }
