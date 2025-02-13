@@ -1,8 +1,12 @@
 package com.kikitalk.chatting.global.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 컨트롤러에서 반환하는 응답의 공통 템플릿 클래스입니다.
@@ -28,10 +32,15 @@ public class CommonResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL) //data가 null일 경우 포함하지 않음
     private final T data;
 
-    private CommonResponse(int status, String msg, T data) {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final String timeStamp;
+
+    @Builder
+    private CommonResponse(int status, String msg, T data, String timeStamp) {
         this.status = status;
         this.msg = msg;
         this.data = data;
+        this.timeStamp = timeStamp;
     }
 
     /**
@@ -48,7 +57,11 @@ public class CommonResponse<T> {
      * @return       생성된 공통 응답 객체
      */
     public static <T> CommonResponse<T> of(HttpStatus status, String msg, T data) {
-        return new CommonResponse<>(status.value(), msg, data);
+        return CommonResponse.<T>builder()
+                .status(status.value())
+                .msg(msg)
+                .data(data)
+                .build();
     }
 
     /**
@@ -64,7 +77,11 @@ public class CommonResponse<T> {
      * @return       생성된 공통 응답 객체
      */
     public static <T> CommonResponse<T> of(String msg, T data) {
-        return new CommonResponse<>(HttpStatus.OK.value(), msg, data);
+        return CommonResponse.<T>builder()
+                .status(HttpStatus.OK.value())
+                .msg(msg)
+                .data(data)
+                .build();
     }
 
     /**
@@ -80,6 +97,19 @@ public class CommonResponse<T> {
      * @return       생성된 공통 응답 객체
      */
     public static <T> CommonResponse<T> of(String msg) {
-        return new CommonResponse<>(HttpStatus.OK.value(), msg, null);
+        return CommonResponse.<T>builder()
+                .status(HttpStatus.OK.value())
+                .msg(msg)
+                .data(null)
+                .build();
+    }
+
+    public static <T> CommonResponse<T> exceptionOf(HttpStatus status, LocalDateTime time, String msg) {
+        return CommonResponse.<T>builder()
+                .status(status.value())
+                .timeStamp(time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .msg(msg)
+                .data(null)
+                .build();
     }
 }
