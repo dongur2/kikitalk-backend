@@ -44,8 +44,7 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(authorize -> authorize
-                                            .requestMatchers("/api/v1/home",
-                                                             "/api/v1/users/register", "/api/v1/users").permitAll()
+                                            .requestMatchers("/api/v1/token").permitAll()
                                             .anyRequest().authenticated())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
