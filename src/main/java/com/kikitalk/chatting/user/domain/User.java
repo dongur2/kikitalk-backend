@@ -1,5 +1,6 @@
 package com.kikitalk.chatting.user.domain;
 
+import com.kikitalk.chatting.user.dto.request.SignUpWithInfoDTO;
 import com.kikitalk.chatting.user.dto.request.UpdateProfileDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,17 +25,28 @@ public class User {
     @Column(length = 100)
     private String message;
 
+    @Column(length = 8)
+    private String birth;
+
     private String profileImage;
 
     @Builder
-    public User(Long id, String snsId, String phone, String name, String nickname, String message, String profileImage) {
+    public User(Long id, String snsId, String phone, String name, String nickname, String message, String birth, String profileImage) {
         this.id = id;
         this.snsId = snsId;
         this.phone = phone;
         this.name = name;
         this.nickname = nickname;
         this.message = message;
+        this.birth = birth;
         this.profileImage = profileImage;
+    }
+
+    public void bindUserProfile(SignUpWithInfoDTO newInfo) {
+        this.name = newInfo.getName();
+        this.nickname = newInfo.getNickname();
+        this.birth = newInfo.getBirth();
+        this.phone = newInfo.getPhone();
     }
 
     public void updateUserProfile(UpdateProfileDTO newInfo, String defaultImg) {

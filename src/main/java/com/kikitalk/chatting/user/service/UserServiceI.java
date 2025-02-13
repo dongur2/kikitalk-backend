@@ -3,6 +3,7 @@ package com.kikitalk.chatting.user.service;
 import com.kikitalk.chatting.global.security.jwt.JwtProvider;
 import com.kikitalk.chatting.user.domain.User;
 import com.kikitalk.chatting.user.dto.request.SignUpDTO;
+import com.kikitalk.chatting.user.dto.request.SignUpWithInfoDTO;
 import com.kikitalk.chatting.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +35,15 @@ public class UserServiceI implements UserService {
     }
 
 
+    //DB 회원 가입
     @Override @Transactional
-    public User join(SignUpDTO postInfo) {
-        return repository.save(postInfo.to(DEFAULT_PROFILE_IMG));
+    public User join(SignUpDTO postInfo) { return repository.save(postInfo.to()); }
+
+    //회원 가입 폼 업데이트
+    @Override @Transactional
+    public void joinWithInfo(User user, SignUpWithInfoDTO updateInfo) {
+        User found = repository.findById(user.getId()).orElseThrow(NullPointerException::new);
+        found.bindUserProfile(updateInfo);
     }
 
     @Override

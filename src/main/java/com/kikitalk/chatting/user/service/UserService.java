@@ -2,6 +2,7 @@ package com.kikitalk.chatting.user.service;
 
 import com.kikitalk.chatting.user.domain.User;
 import com.kikitalk.chatting.user.dto.request.SignUpDTO;
+import com.kikitalk.chatting.user.dto.request.SignUpWithInfoDTO;
 
 /**
  * 회원 관련 서비스 인터페이스입니다.
@@ -39,6 +40,8 @@ public interface UserService {
      * @since 1.0
      */
     User join(SignUpDTO postInfo);
+
+    void joinWithInfo(User user, SignUpWithInfoDTO updateInfo);
 
     /**
      * 회원 로그인을 처리합니다.
