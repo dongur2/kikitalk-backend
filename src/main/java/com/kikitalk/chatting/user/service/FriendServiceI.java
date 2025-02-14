@@ -3,6 +3,7 @@ package com.kikitalk.chatting.user.service;
 import com.kikitalk.chatting.relationship.domain.Relationship;
 import com.kikitalk.chatting.relationship.service.RelationshipService;
 import com.kikitalk.chatting.user.domain.User;
+import com.kikitalk.chatting.user.dto.request.FriendRequestDTO;
 import com.kikitalk.chatting.user.dto.response.SimpleProfileDTO;
 import com.kikitalk.chatting.user.dto.response.SearchProfileDTO;
 import com.kikitalk.chatting.user.repository.UserRepository;
@@ -41,8 +42,10 @@ public class FriendServiceI implements FriendService {
     }
 
     @Override @Transactional
-    public SearchProfileDTO addFriend(User user, Long otherId) throws RuntimeException {
+    public SearchProfileDTO addFriend(User user, FriendRequestDTO other) throws RuntimeException {
         Long userId = user.getId();
+        Long otherId = other.getOtherId();
+
         if(userId.equals(otherId)) throw new RuntimeException("자신을 친구로 추가할 수 없습니다.");
 
         Relationship relationship = relationshipService.addRelationship(userService.getUserById(userId), userService.getUserById(otherId));

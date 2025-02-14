@@ -2,6 +2,7 @@ package com.kikitalk.chatting.user.controller;
 
 import com.kikitalk.chatting.global.response.CommonResponse;
 import com.kikitalk.chatting.global.security.jwt.service.CustomUserDetails;
+import com.kikitalk.chatting.user.dto.request.FriendRequestDTO;
 import com.kikitalk.chatting.user.dto.response.SimpleProfileDTO;
 import com.kikitalk.chatting.user.dto.response.SearchProfileDTO;
 import com.kikitalk.chatting.user.exception.DuplicateRelationshipRequestException;
@@ -65,7 +66,7 @@ public class FriendController {
      * 현재 인증된 사용자와 상대방의 고유 ID를 기반으로 친구 추가 요청을 처리합니다.
      *
      * @param user  현재 인증된 사용자
-     * @param otherId 상대방의 고유 ID
+     * @param other 상대방의 고유 ID를 포함한 DTO
      * @return 친구로 추가된 상대방의 프로필 (ID, 표시 이름, 상태 메세지, 프로필 사진, 친구 관계 상태)
      * @throws NullPointerException 해당 ID를 가진 회원이 존재하지 않을 경우
      * @throws RuntimeException 본인에게 친구 추가 요청을 보낼 경우
@@ -73,8 +74,9 @@ public class FriendController {
      * @since 1.0
      */
     @PostMapping
-    public CommonResponse<SearchProfileDTO> addFriend(@AuthenticationPrincipal CustomUserDetails user, @RequestParam("otherId") Long otherId) {
-        SearchProfileDTO addedFriendProfile = friendService.addFriend(user.getUser(), otherId);
+    public CommonResponse<SearchProfileDTO> addFriend(@AuthenticationPrincipal CustomUserDetails user,
+                                                      @RequestBody FriendRequestDTO other) {
+        SearchProfileDTO addedFriendProfile = friendService.addFriend(user.getUser(), other);
         return CommonResponse.of("친구 추가가 완료되었습니다.", addedFriendProfile);
     }
 }
