@@ -24,8 +24,8 @@ public class FriendServiceI implements FriendService {
     @Autowired private RelationshipService relationshipService;
 
     @Override
-    public List<SimpleProfileDTO> getFriendList(Long id) {
-        return relationshipService.getFriendList(id);
+    public List<SimpleProfileDTO> getFriendList(User user) {
+        return relationshipService.getFriendList(user.getId());
     }
 
     @Override
@@ -42,14 +42,15 @@ public class FriendServiceI implements FriendService {
     }
 
     @Override @Transactional
-    public SearchProfileDTO addFriend(Long myId, Long otherId) throws RuntimeException {
-        if(myId.equals(otherId)) throw new RuntimeException("자신을 친구로 추가할 수 없습니다.");
+    public SearchProfileDTO addFriend(User user, Long otherId) throws RuntimeException {
+        Long userId = user.getId();
+        if(userId.equals(otherId)) throw new RuntimeException("자신을 친구로 추가할 수 없습니다.");
 
-        Relationship relationship = relationshipService.addRelationship(userService.getUserById(myId), userService.getUserById(otherId));
-        return SearchProfileDTO.from(relationship.getFriend(), checkIsFriend(myId, otherId));
+        Relationship relationship = relationshipService.addRelationship(userService.getUserById(userId), userService.getUserById(otherId));
+        return SearchProfileDTO.from(relationship.getFriend(), checkIsFriend(userId, otherId));
     }
 
-    private Boolean checkIsFriend(Long myId, Long otherId) {
-        return relationshipService.checkIsFriend(myId, otherId);
+    private Boolean checkIsFriend(Long userId, Long otherId) {
+        return relationshipService.checkIsFriend(userId, otherId);
     }
 }

@@ -6,15 +6,17 @@ import lombok.*;
 @Getter @Setter @Builder
 @NoArgsConstructor @AllArgsConstructor
 public class SimpleProfileDTO {
-    String profileName;
+    String showName;
     String profileImg;
+    String message;
 
     public static SimpleProfileDTO from(User user) {
         String showName = user.getNickname() == null ? user.getName() : user.getNickname();
 
         return SimpleProfileDTO.builder()
-                .profileName(showName)
+                .showName(showName)
                 .profileImg(user.getProfileImage())
+                .message(user.getMessage())
                 .build();
     }
 }

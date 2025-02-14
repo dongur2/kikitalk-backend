@@ -25,22 +25,22 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/friends")
 public class FriendController {
     private final FriendService friendService;
 
     /**
-     * 현재 인증된 사용자의 고유 ID를 기반으로 친구 목록 조회 요청을 처리합니다.
+     * 현재 인증된 사용자의 친구 목록 조회 요청을 처리합니다.
      * 각 친구의 간단한 프로필 정보 목록을 반환하게 됩니다.
      *
-     * @param id 현재 인증된 사용자의 고유 ID
+     * @param user  현재 인증된 사용자
      * @return 친구 목록 (간단한 프로필 정보: 표시 이름, 프로필 사진),
      *         친구가 없을 경우 빈 리스트 <code>List.of()</code>
      * @since 1.0
      */
-    @GetMapping("/{id}/friends")
-    public CommonResponse<List<SimpleProfileDTO>> getFriends(@PathVariable("id") Long id) {
-        List<SimpleProfileDTO> friendList = friendService.getFriendList(id);
+    @GetMapping
+    public CommonResponse<List<SimpleProfileDTO>> getFriends(@AuthenticationPrincipal CustomUserDetails user) {
+        List<SimpleProfileDTO> friendList = friendService.getFriendList(user.getUser());
         return CommonResponse.of("친구 목록 조회가 완료되었습니다.", friendList);
     }
 
@@ -65,7 +65,7 @@ public class FriendController {
     /**
      * 현재 인증된 사용자와 상대방의 고유 ID를 기반으로 친구 추가 요청을 처리합니다.
      *
-     * @param id      현재 인증된 사용자의 고유 ID
+     * @param user  현재 인증된 사용자
      * @param otherId 상대방의 고유 ID
      * @return 친구로 추가된 상대방의 프로필 (ID, 표시 이름, 상태 메세지, 프로필 사진, 친구 관계 상태)
      * @throws NullPointerException 해당 ID를 가진 회원이 존재하지 않을 경우
@@ -73,9 +73,9 @@ public class FriendController {
      * @throws DuplicateRelationshipRequestException 이미 친구로 추가된 회원에게 친구 추가 요청을 보낼 경우
      * @since 1.0
      */
-    @PostMapping("/{id}/friends")
-    public CommonResponse<SearchProfileDTO> addFriend(@PathVariable("id") Long id, @RequestParam("otherId") Long otherId) {
-        SearchProfileDTO addedFriendProfile = friendService.addFriend(id, otherId);
+    @PostMapping
+    public CommonResponse<SearchProfileDTO> addFriend(@AuthenticationPrincipal CustomUserDetails user, @RequestParam("otherId") Long otherId) {
+        SearchProfileDTO addedFriendProfile = friendService.addFriend(user.getUser(), otherId);
         return CommonResponse.of("친구 추가가 완료되었습니다.", addedFriendProfile);
     }
 }
