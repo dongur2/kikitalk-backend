@@ -2,12 +2,10 @@ package com.kikitalk.chatting.user.controller;
 
 import com.kikitalk.chatting.global.response.CommonResponse;
 import com.kikitalk.chatting.global.security.jwt.service.CustomUserDetails;
-import com.kikitalk.chatting.user.dto.request.UserSearchDTO;
 import com.kikitalk.chatting.user.dto.response.SimpleProfileDTO;
 import com.kikitalk.chatting.user.dto.response.SearchProfileDTO;
 import com.kikitalk.chatting.user.exception.DuplicateRelationshipRequestException;
 import com.kikitalk.chatting.user.service.FriendService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,7 +47,8 @@ public class FriendController {
      * 연락처와 일치하는 회원이 있을 경우, 회원 프로필과 현재 인증된 사용자와의 친구 관계 상태를 반환합니다.
      *
      * @param user  현재 인증된 사용자
-     * @param param 검색 파라미터 (연락처)
+     * @param name  검색 파라미터: 이름
+     * @param phone 검색 파라미터: 연락처
      * @return 연락처와 일치하는 회원 프로필 (ID, 표시 이름, 상태 메세지, 프로필 사진, 친구 관계 상태),
      *         일치하는 회원이 없을 경우 <code>null</code>
      * @throws MethodArgumentNotValidException 유효성 검사에 실패할 경우
@@ -57,8 +56,8 @@ public class FriendController {
      */
     @GetMapping("/search")
     public CommonResponse<SearchProfileDTO> searchFriend(@AuthenticationPrincipal CustomUserDetails user,
-                                                         @Valid @RequestPart(value = "param") UserSearchDTO param) {
-        SearchProfileDTO foundUserProfile = friendService.getUserBySearch(user.getUser(), param);
+                                                         @RequestParam(name = "name", required = false) String name, @RequestParam(name = "phone") String phone) {
+        SearchProfileDTO foundUserProfile = friendService.getUserBySearch(user.getUser(), phone);
         return CommonResponse.of("회원 검색이 완료되었습니다.", foundUserProfile);
     }
 

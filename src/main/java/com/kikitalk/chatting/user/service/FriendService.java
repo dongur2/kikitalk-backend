@@ -1,7 +1,6 @@
 package com.kikitalk.chatting.user.service;
 
 import com.kikitalk.chatting.user.domain.User;
-import com.kikitalk.chatting.user.dto.request.UserSearchDTO;
 import com.kikitalk.chatting.user.dto.response.SimpleProfileDTO;
 import com.kikitalk.chatting.user.dto.response.SearchProfileDTO;
 import com.kikitalk.chatting.user.exception.DuplicateRelationshipRequestException;
@@ -33,12 +32,12 @@ public interface FriendService {
      * 연락처와 일치하는 회원이 있을 경우, 회원 프로필과 현재 인증된 사용자와의 친구 관계 상태를 반환합니다.
      *
      * @param user    현재 인증된 사용자
-     * @param searchInfo 검색할 연락처 정보
+     * @param phone   검색할 연락처
      * @return 연락처와 일치하는 회원 프로필 (ID, 표시 이름, 상태 메세지, 프로필 사진, 친구 관계 상태),
      *         일치하는 회원이 없을 경우 <code>null</code>
      * @since 1.0
      */
-    SearchProfileDTO getUserBySearch(User user, UserSearchDTO searchInfo);
+    SearchProfileDTO getUserBySearch(User user, String phone);
 
     /**
      * 현재 인증된 사용자와 상대방의 고유 ID를 기반으로 친구 추가 요청을 처리합니다.

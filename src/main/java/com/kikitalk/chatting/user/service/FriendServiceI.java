@@ -3,7 +3,6 @@ package com.kikitalk.chatting.user.service;
 import com.kikitalk.chatting.relationship.domain.Relationship;
 import com.kikitalk.chatting.relationship.service.RelationshipService;
 import com.kikitalk.chatting.user.domain.User;
-import com.kikitalk.chatting.user.dto.request.UserSearchDTO;
 import com.kikitalk.chatting.user.dto.response.SimpleProfileDTO;
 import com.kikitalk.chatting.user.dto.response.SearchProfileDTO;
 import com.kikitalk.chatting.user.repository.UserRepository;
@@ -29,8 +28,8 @@ public class FriendServiceI implements FriendService {
     }
 
     @Override
-    public SearchProfileDTO getUserBySearch(User user, UserSearchDTO searchInfo) {
-        Optional<User> optionalUser = repository.findByPhone(searchInfo.getPhone());
+    public SearchProfileDTO getUserBySearch(User user, String phone) {
+        Optional<User> optionalUser = repository.findByPhone(phone);
 
         if (optionalUser.isPresent()) {
             User other = optionalUser.get();
