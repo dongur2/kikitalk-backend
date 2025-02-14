@@ -1,5 +1,6 @@
 package com.kikitalk.chatting.global.security;
 
+import com.kikitalk.chatting.global.security.jwt.JwtAuthEntryPoint;
 import com.kikitalk.chatting.global.security.jwt.JwtFilter;
 import com.kikitalk.chatting.global.security.jwt.JwtProvider;
 import com.kikitalk.chatting.global.security.oauth2.handler.OAuth2FailureHandler;
@@ -25,6 +26,7 @@ public class SecurityConfig {
     @Autowired private final CustomOAuth2UserService oauth2UserService;
     @Autowired private final OAuth2SuccessHandler oauth2SuccessHandler;
     @Autowired private final OAuth2FailureHandler oauth2FailureHandler;
+    @Autowired private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Value("${auth.url.login}") private String LOGIN_URL;
 
@@ -48,7 +50,8 @@ public class SecurityConfig {
                                             .anyRequest().authenticated())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint)); // jwt 토큰 예외 처리
 
         return http.build();
     }

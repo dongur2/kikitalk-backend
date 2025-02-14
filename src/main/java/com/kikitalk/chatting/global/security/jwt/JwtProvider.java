@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Slf4j @Component
@@ -92,10 +91,13 @@ public class JwtProvider {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
+
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("토큰이 유효하지 않습니다. - {}", e.getMessage());
+            throw new MalformedJwtException(e.getMessage());
         } catch (ExpiredJwtException e) {
             log.info("만료된 토큰입니다. - {}", e.getMessage());
+            throw e;
         } catch (UnsupportedJwtException e) {
             log.info("지원하지 않는 토큰입니다. - {}", e.getMessage());
         } catch (IllegalArgumentException e) {
