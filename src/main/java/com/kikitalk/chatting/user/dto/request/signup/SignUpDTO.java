@@ -1,12 +1,13 @@
-package com.kikitalk.chatting.user.dto.request;
+package com.kikitalk.chatting.user.dto.request.signup;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
-@Setter @Getter @ToString
+//추가 정보 입력
+@Setter @Getter
 @AllArgsConstructor @NoArgsConstructor
-public class SignUpWithInfoDTO {
+public class SignUpDTO {
     @NotBlank(message = "이름을 입력해주세요.")
     @Pattern(regexp = "^[가-힣]{2,10}$", message = "이름은 한글로 2~10글자로 입력해주세요.")
     String name;

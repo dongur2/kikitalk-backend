@@ -3,7 +3,7 @@ package com.kikitalk.chatting.global.security.oauth2.handler;
 import com.kikitalk.chatting.global.security.oauth2.service.OAuth2UserPrincipal;
 import com.kikitalk.chatting.global.security.oauth2.userInfo.OAuth2UserInfo;
 import com.kikitalk.chatting.user.domain.User;
-import com.kikitalk.chatting.user.dto.request.SignUpDTO;
+import com.kikitalk.chatting.user.dto.request.signup.UserSaveDTO;
 import com.kikitalk.chatting.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -74,7 +74,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private User registerNewUserWithOAuth2Info(OAuth2UserPrincipal principal) {
         OAuth2UserInfo info = principal.getUserInfo();
-        return userService.join(new SignUpDTO(info.getId(), info.getNickname(), info.getProfileImageUrl()));
+        return userService.save(new UserSaveDTO(info.getId(), info.getNickname(), info.getProfileImageUrl()));
     }
 
     private String loginAndCreateToken(User user) {

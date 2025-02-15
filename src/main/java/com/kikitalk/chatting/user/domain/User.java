@@ -1,6 +1,6 @@
 package com.kikitalk.chatting.user.domain;
 
-import com.kikitalk.chatting.user.dto.request.SignUpWithInfoDTO;
+import com.kikitalk.chatting.user.dto.request.signup.SignUpDTO;
 import com.kikitalk.chatting.user.dto.request.UpdateProfileDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,13 +42,15 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    public void bindUserProfile(SignUpWithInfoDTO newInfo) {
+    //회원가입 폼 입력 데이터 기반 업데이트 (최초 1회)
+    public void bindUserProfile(SignUpDTO newInfo) {
         this.name = newInfo.getName();
         this.nickname = newInfo.getNickname();
         this.birth = newInfo.getBirth();
         this.phone = newInfo.getPhone();
     }
 
+    //프로필 수정
     public void updateUserProfile(UpdateProfileDTO newInfo) {
         this.nickname = newInfo.getNickname();
         this.message = newInfo.getMessage();
