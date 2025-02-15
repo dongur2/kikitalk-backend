@@ -8,16 +8,14 @@ import lombok.*;
 public class UpdateProfileDTO {
 
     @NotBlank(message = "닉네임을 입력해주세요.")
-    @Pattern(regexp = "^[0-9A-Za-z가-힣]+$", message = "닉네임에 특수문자는 포함할 수 없습니다.")
-    @Size(min = 2, max = 20, message = "닉네임은 최소 2글자, 최대 20글자까지 가능합니다.")
+    @Pattern(regexp = "^[0-9A-Za-z가-힣]{2,20}$", message = "닉네임은 특수문자 없이 2~20글자로 입력해주세요.")
     String nickname;
 
     @Size(max = 50, message = "상태 메세지는 최대 50글자까지 가능합니다.")
     String message;
 
-    @NotBlank(message = "연락처를 입력해주세요.")
-    @Pattern(regexp = "^[0-9]{10,11}$", message = "연락처는 10~11자리의 숫자만 입력할 수 있습니다.")
-    String phone;
+    @NotBlank(message = "생년월일을 입력해주세요.")
+    @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", message = "생년월일은 YYYY-MM-DD 형식으로 입력해주세요.")
+    String birth;
 
-    String profileImage;
 }

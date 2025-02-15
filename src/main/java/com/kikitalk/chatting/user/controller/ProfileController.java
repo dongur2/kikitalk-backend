@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users/{id}")
+@RequestMapping("/api/v1/users")
 public class ProfileController {
     private final ProfileService profileService;
 
@@ -33,7 +33,7 @@ public class ProfileController {
      * @return 회원 상세 프로필 (이름, 닉네임, 상태 메세지, 프로필 사진)
      * @since 1.0
      */
-    @GetMapping
+    @GetMapping("/{id}")
     public CommonResponse<DetailProfileDTO> getUserProfile(@PathVariable("id") Long id) {
         DetailProfileDTO profile = profileService.getUserProfileById(id);
         return CommonResponse.of("프로필 조회가 완료되었습니다.", profile);
@@ -57,13 +57,10 @@ public class ProfileController {
      * @throws AccessDeniedException 타인의 프로필 수정을 요청할 경우
      * @since 1.0
      */
-    @PostMapping
-    public CommonResponse<DetailProfileDTO> updateUserProfile(@AuthenticationPrincipal CustomUserDetails user, @PathVariable("id") Long id,
-                                                              @Valid @RequestPart(value = "info") UpdateProfileDTO userInfo) {
-        // 요청한 id와 현재 로그인한 사용자의 id가 다른 경우
-        if (!user.getUser().getId().equals(id)) throw new AccessDeniedException("권한이 없습니다.");
-
-        DetailProfileDTO updatedProfile = profileService.updateUserProfile(id, userInfo);
+    @PatchMapping
+    public CommonResponse<DetailProfileDTO> updateUserProfile(@AuthenticationPrincipal CustomUserDetails user,
+                                                              @Valid @RequestBody UpdateProfileDTO info) {
+        DetailProfileDTO updatedProfile = profileService.updateUserProfile(user.getUser().getId(), info);
         return CommonResponse.of("프로필 수정이 완료되었습니다.", updatedProfile);
     }
 }

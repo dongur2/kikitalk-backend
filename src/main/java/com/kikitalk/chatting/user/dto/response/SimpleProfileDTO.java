@@ -6,6 +6,7 @@ import lombok.*;
 @Getter @Setter @Builder
 @NoArgsConstructor @AllArgsConstructor
 public class SimpleProfileDTO {
+    Long userId;
     String showName;
     String profileImg;
     String message;
@@ -14,6 +15,7 @@ public class SimpleProfileDTO {
         String showName = user.getNickname() == null ? user.getName() : user.getNickname();
 
         return SimpleProfileDTO.builder()
+                .userId(user.getId())
                 .showName(showName)
                 .profileImg(user.getProfileImage())
                 .message(user.getMessage())

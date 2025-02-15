@@ -2,24 +2,21 @@ package com.kikitalk.chatting.user.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Setter @Getter @ToString
 @AllArgsConstructor @NoArgsConstructor
 public class SignUpWithInfoDTO {
     @NotBlank(message = "이름을 입력해주세요.")
-    @Pattern(regexp = "^[가-힣]+$", message = "이름은 한글만 가능합니다.")
-    @Size(min = 2, max = 10, message = "이름은 최소 2글자, 최대 10글자까지 가능합니다.")
+    @Pattern(regexp = "^[가-힣]{2,10}$", message = "이름은 한글로 2~10글자로 입력해주세요.")
     String name;
 
     @NotBlank(message = "닉네임을 입력해주세요.")
-    @Pattern(regexp = "^[0-9A-Za-z가-힣]+$", message = "닉네임에 특수문자는 포함할 수 없습니다.")
-    @Size(min = 2, max = 20, message = "닉네임은 최소 2글자, 최대 20글자까지 가능합니다.")
+    @Pattern(regexp = "^[0-9A-Za-z가-힣]{2,20}$", message = "닉네임은 특수문자 없이 2~20글자로 입력해주세요.")
     String nickname;
 
     @NotBlank(message = "생년월일을 입력해주세요.")
-    @Pattern(regexp = "^[0-9]{8}$", message = "생년월일은 숫자 8자리로 입력 가능합니다. (YYYYMMDD)")
+    @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", message = "생년월일은 YYYY-MM-DD 형식으로 입력해주세요.")
     String birth;
 
     @NotBlank(message = "연락처를 입력해주세요.")

@@ -10,6 +10,7 @@ public class DetailProfileDTO {
     String nickname;
     String message;
     String profileImg;
+    String birth;
 
     public static DetailProfileDTO from(User user) {
         return DetailProfileDTO.builder()
@@ -17,6 +18,7 @@ public class DetailProfileDTO {
                 .nickname(user.getNickname())
                 .message(user.getMessage())
                 .profileImg(user.getProfileImage())
+                .birth(user.getBirth())
                 .build();
     }
 }

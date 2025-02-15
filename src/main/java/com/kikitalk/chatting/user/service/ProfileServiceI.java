@@ -26,7 +26,7 @@ public class ProfileServiceI implements ProfileService {
     @Override @Transactional
     public DetailProfileDTO updateUserProfile(Long id, UpdateProfileDTO updateInfo) {
         User user = repository.findById(id).orElseThrow(NullPointerException::new);
-        user.updateUserProfile(updateInfo, DEFAULT_PROFILE_IMG);
+        user.updateUserProfile(updateInfo);
         return DetailProfileDTO.from(user);
     }
 }

@@ -25,7 +25,7 @@ public class User {
     @Column(length = 100)
     private String message;
 
-    @Column(length = 8)
+    @Column(length = 10)
     private String birth;
 
     private String profileImage;
@@ -49,10 +49,9 @@ public class User {
         this.phone = newInfo.getPhone();
     }
 
-    public void updateUserProfile(UpdateProfileDTO newInfo, String defaultImg) {
-        this.phone = newInfo.getPhone();
+    public void updateUserProfile(UpdateProfileDTO newInfo) {
         this.nickname = newInfo.getNickname();
         this.message = newInfo.getMessage();
-        this.profileImage = (newInfo.getProfileImage() == null) ? defaultImg : newInfo.getProfileImage();
+        this.birth = newInfo.getBirth();
     }
 }
