@@ -3,6 +3,7 @@ package com.kikitalk.chatting.user.service;
 import com.kikitalk.chatting.user.domain.User;
 import com.kikitalk.chatting.user.dto.request.signup.UserSaveDTO;
 import com.kikitalk.chatting.user.dto.request.signup.SignUpDTO;
+import com.kikitalk.chatting.user.dto.response.profile.search.SearchProfileDTO;
 import com.kikitalk.chatting.user.dto.response.signup.SignUpFormDTO;
 
 /**
@@ -48,6 +49,19 @@ public interface UserService {
      * @since 1.0
      */
     User save(UserSaveDTO oauth2Info);
+
+    /**
+     * 입력받은 연락처와 일치하는 회원 조회 요청을 처리합니다.
+     * 연락처와 일치하는 회원이 있을 경우, 회원 프로필과 현재 인증된 사용자와의 친구 관계 상태를 반환합니다.
+     *
+     * @param currentUser 인증된 사용자
+     * @param phone 검색할 연락처
+     * @return 연락처와 일치하는 회원 프로필, (일치하는 회원이 없을 경우 <code>null</code>)
+     *
+     * @since 1.0
+     */
+    SearchProfileDTO searchUserProfile(User currentUser, String phone);
+
 
     /**
      * 회원 정보의 필수값을 확인하여 회원가입 완료 여부를 반환합니다.

@@ -1,25 +1,29 @@
 package com.kikitalk.chatting.user.service;
 
 import com.kikitalk.chatting.global.security.jwt.JwtProvider;
+import com.kikitalk.chatting.relationship.service.RelationshipService;
 import com.kikitalk.chatting.user.domain.User;
 import com.kikitalk.chatting.user.dto.request.signup.UserSaveDTO;
 import com.kikitalk.chatting.user.dto.request.signup.SignUpDTO;
+import com.kikitalk.chatting.user.dto.response.profile.search.SearchProfileDTO;
 import com.kikitalk.chatting.user.dto.response.signup.SignUpFormDTO;
 import com.kikitalk.chatting.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 
 
 @Slf4j @Service
 @RequiredArgsConstructor
 public class UserServiceI implements UserService {
-    @Autowired private JwtProvider jwtProvider;
-    @Autowired private UserRepository repository;
+    @Autowired private final JwtProvider jwtProvider;
+    @Autowired private final UserRepository repository;
+
+    @Autowired private final RelationshipService relationshipService;
 
     //회원 조회 (oauth2)
     @Override
@@ -36,6 +40,20 @@ public class UserServiceI implements UserService {
     //회원 DB 저장
     @Override @Transactional
     public User save(UserSaveDTO oauth2Info) { return repository.save(oauth2Info.to()); }
+
+    //사용자 검색
+    @Override
+    public SearchProfileDTO searchUserProfile(User currentUser, String phone) {
+        Optional<User> optionalUser = repository.findByPhone(phone);
+
+        if (optionalUser.isPresent()) {
+            User other = optionalUser.get();
+            Boolean isFriend = relationshipService.checkIsFriend(currentUser.getId(), other.getId());
+            return SearchProfileDTO.from(other, isFriend);
+        }
+
+        return null;
+    }
 
     //회원 가입 폼 리다이렉트 여부 확인
     @Override

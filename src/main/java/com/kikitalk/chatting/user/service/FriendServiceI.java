@@ -1,12 +1,9 @@
 package com.kikitalk.chatting.user.service;
 
-import com.kikitalk.chatting.relationship.domain.Relationship;
 import com.kikitalk.chatting.relationship.service.RelationshipService;
 import com.kikitalk.chatting.user.domain.User;
 import com.kikitalk.chatting.user.dto.request.FriendRequestDTO;
 import com.kikitalk.chatting.user.dto.response.profile.SimpleProfileDTO;
-import com.kikitalk.chatting.user.dto.response.profile.search.SearchProfileDTO;
-import com.kikitalk.chatting.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,45 +11,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
-@Slf4j @Service
-@RequiredArgsConstructor
+@Slf4j @Service @RequiredArgsConstructor
 public class FriendServiceI implements FriendService {
-    @Autowired private UserService userService;
-    @Autowired private UserRepository repository;
-    @Autowired private RelationshipService relationshipService;
+    @Autowired private final UserService userService;
+    @Autowired private final RelationshipService relationshipService;
 
+    //친구 목록 조회
     @Override
-    public List<SimpleProfileDTO> getFriendList(User user) {
-        return relationshipService.getFriendList(user.getId());
+    public List<SimpleProfileDTO> fetchMyFriendSimpleProfileList(User currentUser) {
+        List<User> friends = relationshipService.getFriendList(currentUser);
+        return convertToSimpleProfile(friends);
     }
 
-    @Override
-    public SearchProfileDTO getUserBySearch(User user, String phone) {
-        Optional<User> optionalUser = repository.findByPhone(phone);
-
-        if (optionalUser.isPresent()) {
-            User other = optionalUser.get();
-            Boolean isFriend = checkIsFriend(user.getId(), other.getId());
-            return SearchProfileDTO.from(other, isFriend);
-        }
-
-        return null;
-    }
-
+    //친구 추가
     @Override @Transactional
-    public SearchProfileDTO addFriend(User user, FriendRequestDTO other) throws RuntimeException {
-        Long userId = user.getId();
-        Long otherId = other.getOtherId();
-
+    public Boolean addFriend(User currentUser, FriendRequestDTO requestDTO) throws RuntimeException {
+        Long userId = currentUser.getId();
+        Long otherId = requestDTO.getOtherId();
         if(userId.equals(otherId)) throw new RuntimeException("자신을 친구로 추가할 수 없습니다.");
 
-        Relationship relationship = relationshipService.addRelationship(userService.getUserById(userId), userService.getUserById(otherId));
-        return SearchProfileDTO.from(relationship.getFriend(), checkIsFriend(userId, otherId));
+        //추가 후 성공 여부 반환
+        return relationshipService.addRelationship(userService.getUserById(userId), userService.getUserById(otherId));
     }
 
-    private Boolean checkIsFriend(Long userId, Long otherId) {
-        return relationshipService.checkIsFriend(userId, otherId);
+    //친구 목록을 간단한 프로필 목록으로 변환
+    private List<SimpleProfileDTO> convertToSimpleProfile(List<User> friends) {
+        if(friends.isEmpty()) return List.of();
+
+        return friends.stream()
+                .map(SimpleProfileDTO::from)
+                .toList();
     }
 }
