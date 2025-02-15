@@ -1,11 +1,12 @@
-package com.kikitalk.chatting.user.dto.request;
+package com.kikitalk.chatting.user.dto.request.profile;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Setter @Getter @ToString
+//프로필 수정 요청
+@Setter @Getter
 @AllArgsConstructor @NoArgsConstructor
-public class UpdateProfileDTO {
+public class ProfileUpdateDTO {
 
     @NotBlank(message = "닉네임을 입력해주세요.")
     @Pattern(regexp = "^[0-9A-Za-z가-힣]{2,20}$", message = "닉네임은 특수문자 없이 2~20글자로 입력해주세요.")

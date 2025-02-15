@@ -2,7 +2,7 @@ package com.kikitalk.chatting.relationship.service;
 
 import com.kikitalk.chatting.relationship.domain.Relationship;
 import com.kikitalk.chatting.user.domain.User;
-import com.kikitalk.chatting.user.dto.response.SimpleProfileDTO;
+import com.kikitalk.chatting.user.dto.response.profile.SimpleProfileDTO;
 
 import java.util.List;
 

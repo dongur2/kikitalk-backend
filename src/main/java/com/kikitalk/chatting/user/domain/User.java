@@ -1,7 +1,7 @@
 package com.kikitalk.chatting.user.domain;
 
 import com.kikitalk.chatting.user.dto.request.signup.SignUpDTO;
-import com.kikitalk.chatting.user.dto.request.UpdateProfileDTO;
+import com.kikitalk.chatting.user.dto.request.profile.ProfileUpdateDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -51,7 +51,7 @@ public class User {
     }
 
     //프로필 수정
-    public void updateUserProfile(UpdateProfileDTO newInfo) {
+    public void updateUserProfile(ProfileUpdateDTO newInfo) {
         this.nickname = newInfo.getNickname();
         this.message = newInfo.getMessage();
         this.birth = newInfo.getBirth();

@@ -2,8 +2,8 @@ package com.kikitalk.chatting.user.service;
 
 import com.kikitalk.chatting.user.domain.User;
 import com.kikitalk.chatting.user.dto.request.FriendRequestDTO;
-import com.kikitalk.chatting.user.dto.response.SimpleProfileDTO;
-import com.kikitalk.chatting.user.dto.response.SearchProfileDTO;
+import com.kikitalk.chatting.user.dto.response.profile.SimpleProfileDTO;
+import com.kikitalk.chatting.user.dto.response.profile.search.SearchProfileDTO;
 import com.kikitalk.chatting.user.exception.DuplicateRelationshipRequestException;
 
 import java.util.List;

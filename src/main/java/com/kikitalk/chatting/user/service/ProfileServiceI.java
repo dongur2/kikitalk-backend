@@ -1,32 +1,45 @@
 package com.kikitalk.chatting.user.service;
 
 import com.kikitalk.chatting.user.domain.User;
-import com.kikitalk.chatting.user.dto.request.UpdateProfileDTO;
-import com.kikitalk.chatting.user.dto.response.DetailProfileDTO;
-import com.kikitalk.chatting.user.repository.UserRepository;
+import com.kikitalk.chatting.user.dto.request.profile.ProfileUpdateDTO;
+import com.kikitalk.chatting.user.dto.response.profile.DetailProfileDTO;
+import com.kikitalk.chatting.user.dto.response.profile.SimpleProfileDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j @Service
 @RequiredArgsConstructor
 public class ProfileServiceI implements ProfileService {
-    @Autowired private UserRepository repository;
-    @Value("${profile.default_img}") private String DEFAULT_PROFILE_IMG;
+    @Autowired private final UserService userService;
 
+    //내 간단 프로필 조회
     @Override
-    public DetailProfileDTO getUserProfileById(Long id) throws NullPointerException {
-        User user = repository.findById(id).orElseThrow(NullPointerException::new);
+    public SimpleProfileDTO fetchMySimpleProfile(User currentUser) throws NullPointerException {
+        User user = userService.getUserById(currentUser.getId());
+        return SimpleProfileDTO.from(user);
+    }
+
+    //내 상세 프로필 조회
+    @Override
+    public DetailProfileDTO fetchUserDetailProfile(User currentUser) throws NullPointerException {
+        return fetchUserDetailProfile(currentUser.getId());
+    }
+
+    //상세 프로필 조회
+    @Override
+    public DetailProfileDTO fetchUserDetailProfile(Long userId) throws NullPointerException {
+        User user = userService.getUserById(userId);
         return DetailProfileDTO.from(user);
     }
 
+    //내 프로필 수정
     @Override @Transactional
-    public DetailProfileDTO updateUserProfile(Long id, UpdateProfileDTO updateInfo) {
-        User user = repository.findById(id).orElseThrow(NullPointerException::new);
-        user.updateUserProfile(updateInfo);
+    public DetailProfileDTO updateUserProfile(User currentUser, ProfileUpdateDTO newInfo) throws NullPointerException {
+        User user = userService.getUserById(currentUser.getId());
+        user.updateUserProfile(newInfo);
         return DetailProfileDTO.from(user);
     }
 }

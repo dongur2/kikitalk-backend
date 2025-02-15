@@ -21,18 +21,16 @@ public class UserServiceI implements UserService {
     @Autowired private JwtProvider jwtProvider;
     @Autowired private UserRepository repository;
 
-    @Value("${profile.default_img}") private String DEFAULT_PROFILE_IMG;
-
-    //oauth2
+    //회원 조회 (oauth2)
     @Override
-    public User getUserBySnsId(String snsId) {
-        return repository.findBySnsId(snsId).orElseThrow(NullPointerException::new);
+    public User getUserBySnsId(String snsId) throws NullPointerException {
+        return repository.findBySnsId(snsId).orElseThrow(() -> new NullPointerException("해당하는 사용자가 없습니다."));
     }
 
-    //관계 추가
+    //회원 조회
     @Override
-    public User getUserById(Long id) {
-        return repository.findById(id).orElseThrow(NullPointerException::new);
+    public User getUserById(Long userId) throws NullPointerException {
+        return repository.findById(userId).orElseThrow(() -> new NullPointerException("해당하는 사용자가 없습니다."));
     }
 
     //회원 DB 저장
@@ -41,29 +39,29 @@ public class UserServiceI implements UserService {
 
     //회원 가입 폼 리다이렉트 여부 확인
     @Override
-    public Boolean checkSignUpStatus(User user) {
-        return user.getName() != null && user.getNickname() != null && user.getPhone() != null && user.getBirth() != null;
+    public Boolean checkSignUpStatus(User currentUser) {
+        return currentUser.getName() != null && currentUser.getNickname() != null && currentUser.getPhone() != null && currentUser.getBirth() != null;
     }
 
     //회원가입 폼: 바인딩 데이터 조회
     @Override
-    public SignUpFormDTO getSignUpFormData(User user) {
-        User currentUser = repository.findById(user.getId()).orElseThrow(NullPointerException::new);
+    public SignUpFormDTO getSignUpFormData(User currentUser) throws NullPointerException {
+        User user = getUserById(currentUser.getId());
         return SignUpFormDTO.builder()
-                .nickname(currentUser.getNickname())
+                .nickname(user.getNickname())
                 .build();
     }
 
     //회원 가입 폼: 추가 정보 업데이트
     @Override @Transactional
-    public void updateRequiredInfo(User user, SignUpDTO additionalInfo) {
-        User found = repository.findById(user.getId()).orElseThrow(NullPointerException::new);
-        found.bindUserProfile(additionalInfo);
+    public void updateRequiredInfo(User currentUser, SignUpDTO additionalInfo) throws NullPointerException {
+        User user = getUserById(currentUser.getId());
+        user.bindUserProfile(additionalInfo);
     }
 
     //로그인: 토큰 조회
     @Override
-    public String signIn(User user) {
-        return jwtProvider.createAccessToken(user);
+    public String signIn(User currentUser) {
+        return jwtProvider.createAccessToken(currentUser);
     }
 }
