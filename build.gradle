@@ -39,7 +39,10 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-validation')
 
 	//redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation('org.springframework.boot:spring-boot-starter-data-redis')
+
+	//websocket, stomp
+	implementation('org.springframework.boot:spring-boot-starter-websocket')
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
