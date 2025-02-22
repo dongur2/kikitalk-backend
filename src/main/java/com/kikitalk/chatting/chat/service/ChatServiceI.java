@@ -99,6 +99,23 @@ public class ChatServiceI implements ChatService{
         return MessageInChatDTO.from(sent);
     }
 
+    //메세지 전송
+    @Override @Transactional
+    public MessageInChatDTO createChatMessage(MessageSendDTO message) throws NullPointerException {
+        ChatRoom chatRoom = chatRoomRepository.findById(message.getChatRoomId()).orElseThrow(() -> new NullPointerException("채팅방이 존재하지 않습니다."));
+        User user = userService.getUserById(message.getWriterId());
+
+        ChatMessage newMessage = ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .user(user)
+                .content(message.getContent())
+                .build();
+
+        ChatMessage sent = chatMessageRepository.save(newMessage);
+
+        return MessageInChatDTO.from(sent);
+    }
+
     //채팅방 삭제
     @Override @Transactional
     public void deleteChatRoom(User user, Long chatRoomId) {

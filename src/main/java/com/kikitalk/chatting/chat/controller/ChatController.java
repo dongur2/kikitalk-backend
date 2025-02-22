@@ -32,7 +32,7 @@ public class ChatController {
 
     //채팅방 개설
     @PostMapping
-    public CommonResponse<Long> getOrCreateChatRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam Long otherId){
+    public CommonResponse<Long> getOrCreateChatRoom(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody Long otherId){
         Long roomId = chatService.getOrCreateChatRoom(userDetails.getUser(), otherId);
         return CommonResponse.of("채팅방 개설 또는 기존 채팅방 조회를 완료했습니다.", roomId);
     }

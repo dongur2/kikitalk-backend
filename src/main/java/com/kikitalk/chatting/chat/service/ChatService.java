@@ -14,5 +14,6 @@ public interface ChatService {
     Long getOrCreateChatRoom(User user, Long otherId);
     ChatRoomDTO getChatRoomWithMessages(User user, Long chatRoomId);
     MessageInChatDTO createChatMessage(User user, Long chatRoomId, MessageSendDTO message);
+    MessageInChatDTO createChatMessage(MessageSendDTO message);
     void deleteChatRoom(User user, Long chatRoomId);
 }
