@@ -1,4 +1,4 @@
-package com.kikitalk.chatting.chat.config;
+package com.kikitalk.chatting.chat.config.websocket;
 
 import com.kikitalk.chatting.global.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
