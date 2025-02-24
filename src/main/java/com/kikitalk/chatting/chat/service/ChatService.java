@@ -1,6 +1,7 @@
 package com.kikitalk.chatting.chat.service;
 
 import com.kikitalk.chatting.chat.dto.request.MessageSendDTO;
+import com.kikitalk.chatting.chat.dto.request.StompMessageDTO;
 import com.kikitalk.chatting.chat.dto.response.ChatRoomDTO;
 import com.kikitalk.chatting.chat.dto.response.ChatRoomListDTO;
 import com.kikitalk.chatting.chat.dto.response.MessageInChatDTO;
@@ -13,7 +14,8 @@ public interface ChatService {
     List<ChatRoomListDTO> getMyChatRooms(User user);
     Long getOrCreateChatRoom(User user, Long otherId);
     ChatRoomDTO getChatRoomWithMessages(User user, Long chatRoomId);
-    MessageInChatDTO createChatMessage(User user, Long chatRoomId, MessageSendDTO message);
+    MessageInChatDTO createChatMessage(Long chatRoomId, StompMessageDTO messageDTO);
     MessageInChatDTO createChatMessage(MessageSendDTO message);
     void deleteChatRoom(User user, Long chatRoomId);
+    Boolean isRoomParticipant(Long userId, Long chatRoomId);
 }

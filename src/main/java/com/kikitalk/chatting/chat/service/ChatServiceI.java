@@ -4,6 +4,7 @@ import com.kikitalk.chatting.chat.domain.ChatMessage;
 import com.kikitalk.chatting.chat.domain.ChatParticipant;
 import com.kikitalk.chatting.chat.domain.ChatRoom;
 import com.kikitalk.chatting.chat.dto.request.MessageSendDTO;
+import com.kikitalk.chatting.chat.dto.request.StompMessageDTO;
 import com.kikitalk.chatting.chat.dto.response.ChatRoomDTO;
 import com.kikitalk.chatting.chat.dto.response.ChatRoomListDTO;
 import com.kikitalk.chatting.chat.dto.response.MessageInChatDTO;
@@ -12,6 +13,7 @@ import com.kikitalk.chatting.chat.repository.ChatParticipantRepository;
 import com.kikitalk.chatting.chat.repository.ChatRoomRepository;
 import com.kikitalk.chatting.user.domain.User;
 import com.kikitalk.chatting.user.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,8 +87,9 @@ public class ChatServiceI implements ChatService{
 
     //메세지 전송
     @Override @Transactional
-    public MessageInChatDTO createChatMessage(User user, Long chatRoomId, MessageSendDTO message) throws NullPointerException {
+    public MessageInChatDTO createChatMessage(Long chatRoomId, StompMessageDTO message) throws NullPointerException {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new NullPointerException("채팅방이 존재하지 않습니다."));
+        User user = userService.getUserById(message.getWriterId());
 
         ChatMessage newMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
@@ -120,6 +123,18 @@ public class ChatServiceI implements ChatService{
     @Override @Transactional
     public void deleteChatRoom(User user, Long chatRoomId) {
         chatRoomRepository.deleteById(chatRoomId);
+    }
+
+    @Override
+    public Boolean isRoomParticipant(Long userId, Long chatRoomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new EntityNotFoundException("아이디에 해당하는 채팅방이 존재하지 않습니다."));
+        User user = userService.getUserById(userId);
+
+        List<ChatParticipant> chatParticipants = chatParticipantRepository.findByChatRoom(chatRoom);
+        for (ChatParticipant chatParticipant : chatParticipants) {
+            if(chatParticipant.getUser().getId().equals(user.getId())) return true;
+        }
+        return false;
     }
 
     //채팅방 생성

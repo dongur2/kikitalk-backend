@@ -18,6 +18,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Configuration @EnableWebSecurity
@@ -46,7 +51,7 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(authorize -> authorize
-                                            .requestMatchers("/api/v1/token", "/connect").permitAll()
+                                            .requestMatchers("/api/v1/token", "/stomp-connect/**").permitAll()
                                             .anyRequest().authenticated())
 
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -61,5 +66,18 @@ public class SecurityConfig {
         return web -> web
                 .ignoring()
                 .requestMatchers("/favicon.ico");
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("*")); //HTTP메서드
+        configuration.setAllowedHeaders(List.of("*")); //헤더값
+        configuration.setAllowCredentials(true); //자격증명
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); //모든 url 패턴 cors 허용
+        return source;
     }
 }

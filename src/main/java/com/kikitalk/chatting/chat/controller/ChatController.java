@@ -45,12 +45,12 @@ public class ChatController {
     }
 
     //채팅 메세지 전송
-    @PostMapping("/{chatRoomId}/messages")
-    public CommonResponse<MessageInChatDTO> sendChatMessage(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                            @PathVariable("chatRoomId") Long chatRoomId, @Valid @RequestPart(name = "message") MessageSendDTO message){
-        MessageInChatDTO sentMessage = chatService.createChatMessage(userDetails.getUser(), chatRoomId, message);
-        return CommonResponse.of("메세지 전송을 완료했습니다.", sentMessage);
-    }
+//    @PostMapping("/{chatRoomId}/messages")
+//    public CommonResponse<MessageInChatDTO> sendChatMessage(@AuthenticationPrincipal CustomUserDetails userDetails,
+//                                                            @PathVariable("chatRoomId") Long chatRoomId, @Valid @RequestPart(name = "message") MessageSendDTO message){
+//        MessageInChatDTO sentMessage = chatService.createChatMessage(userDetails.getUser(), chatRoomId, message);
+//        return CommonResponse.of("메세지 전송을 완료했습니다.", sentMessage);
+//    }
 
     //채팅방 나가기
     @DeleteMapping("/{chatRoomId}")
