@@ -44,15 +44,13 @@ public class ChatServiceI implements ChatService{
             ChatRoom chatRoom = participant.getChatRoom();
 
             //상대방
-            List<User> company = chatRoom.getParticipants()
-                    .stream().map(ChatParticipant::getUser).filter(partUser -> !partUser.getId().equals(user.getId())).toList();
+            User other = extractOtherUser(chatRoom, user);
 
             //최신 메세지
-            ChatMessage latestMessage = chatRoom.getMessages()
-                    .stream().max(Comparator.comparing(ChatMessage::getCreatedAt)).get();
+            ChatMessage latestMessage = chatRoom.getMessages().stream().max(Comparator.comparing(ChatMessage::getCreatedAt)).get();
 
             //DTO
-            ChatRoomListDTO charRoomListDTO = ChatRoomListDTO.from(chatRoom, company.get(0), latestMessage);
+            ChatRoomListDTO charRoomListDTO = ChatRoomListDTO.from(chatRoom, other, latestMessage);
             chatRoomList.add(charRoomListDTO);
         });
 
@@ -78,14 +76,12 @@ public class ChatServiceI implements ChatService{
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new NullPointerException("채팅방이 존재하지 않습니다."));
 
         //상대방
-        User company = chatRoom.getParticipants()
-                .stream().map(ChatParticipant::getUser).filter(partUser -> !partUser.getId().equals(user.getId())).toList()
-                .get(0);
+        User company = extractOtherUser(chatRoom, user);
 
         return ChatRoomDTO.from(chatRoom, company);
     }
 
-    //메세지 전송
+    //메세지 전송(STOMP)
     @Override @Transactional
     public MessageInChatDTO createChatMessage(Long chatRoomId, StompMessageDTO message) throws NullPointerException {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new NullPointerException("채팅방이 존재하지 않습니다."));
@@ -102,7 +98,7 @@ public class ChatServiceI implements ChatService{
         return MessageInChatDTO.from(sent);
     }
 
-    //메세지 전송
+    //메세지 전송(WEBSOCKET)
     @Override @Transactional
     public MessageInChatDTO createChatMessage(MessageSendDTO message) throws NullPointerException {
         ChatRoom chatRoom = chatRoomRepository.findById(message.getChatRoomId()).orElseThrow(() -> new NullPointerException("채팅방이 존재하지 않습니다."));
@@ -131,14 +127,17 @@ public class ChatServiceI implements ChatService{
         User user = userService.getUserById(userId);
 
         List<ChatParticipant> chatParticipants = chatParticipantRepository.findByChatRoom(chatRoom);
+
+        //현재 사용자가 해당 채팅방의 참여자로 포함되어있는지 여부 확인
         for (ChatParticipant chatParticipant : chatParticipants) {
             if(chatParticipant.getUser().getId().equals(user.getId())) return true;
         }
+
         return false;
     }
 
     //채팅방 생성
-    public Long createChatRoom(User user, User other) {
+    private Long createChatRoom(User user, User other) {
         ChatRoom newChatRoom = chatRoomRepository.save(new ChatRoom());
         addParticipantToRoom(newChatRoom, user);
         addParticipantToRoom(newChatRoom, other);
@@ -146,11 +145,19 @@ public class ChatServiceI implements ChatService{
     }
 
     //채팅방 참여자 추가
-    public void addParticipantToRoom(ChatRoom chatRoom, User participant){
+    private void addParticipantToRoom(ChatRoom chatRoom, User participant){
         ChatParticipant chatParticipant = ChatParticipant.builder()
                 .chatRoom(chatRoom)
                 .user(participant)
                 .build();
         chatParticipantRepository.save(chatParticipant);
+    }
+
+    //채팅 참여자 중 상대방 추출
+    private User extractOtherUser(ChatRoom chatRoom, User me) {
+        return chatRoom.getParticipants().stream()
+                .map(ChatParticipant::getUser)
+                .filter(partUser -> !partUser.getId().equals(me.getId()))
+                .toList().get(0);
     }
 }
